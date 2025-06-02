@@ -33,8 +33,8 @@
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CommonLibrary\CommonLibrary\CommonLibrary.csproj" />
-    <ProjectReference Include="..\..\CommonLibrary\RazorCommonLibrary\RazorCommonLibrary.csproj" />
+    <ProjectReference Include="..\..\TM_ESOP\CommonLibrary\CommonLibrary.csproj" />
+    <ProjectReference Include="..\..\TM_ESOP\RazorCommonLibrary\RazorCommonLibrary.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="Pages\Report\ReportPage5.razor">
