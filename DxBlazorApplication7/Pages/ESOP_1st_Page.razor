@@ -1,0 +1,83 @@
+﻿@page "/ESOPPage"
+@using DxBlazorApplication7.Data
+@inject DataService DataService
+
+<DxTabs CssClass="tabs" SizeMode="SizeMode.Large" RenderMode="TabsRenderMode.AllTabs">
+    <DxTabPage Text="ESOP">
+        <br />
+        <h3>清單</h3>
+        <br />
+        @foreach (var item in _StationSelection.Select(x => x.StationID).Distinct())
+        {
+            <div class="background-cards">
+                <ESOP_2nd_Page Param1="@item"></ESOP_2nd_Page>
+            </div>
+        }
+    </DxTabPage>
+    <DxTabPage Text="手動選取SOP">
+        <ESOPSelectionPage></ESOPSelectionPage>
+    </DxTabPage>
+    <DxTabPage Text="工作站別">
+        <StationStatusPage></StationStatusPage>
+    </DxTabPage>
+    <DxTabPage Text="做業程序">
+        <ProcedureStatusPage></ProcedureStatusPage>
+    </DxTabPage>
+    <DxTabPage Text="機型">
+        <ModelStatusPage></ModelStatusPage>
+    </DxTabPage>
+    <DxTabPage Text="SOP綁定">
+        <ESOPStatusPage></ESOPStatusPage>
+    </DxTabPage>
+</DxTabs>
+
+<DxPopup Width="1800px" Height="900px" HorizontalAlignment="HorizontalAlignment.Center" VerticalAlignment="VerticalAlignment.Center" @bind-Visible="@EsopPopupVisible"
+         CloseOnEscape="false"
+         CloseOnOutsideClick="false"
+         ShowFooter="true"
+         BodyText="@_ESOPMsg">
+
+    <BodyContentTemplate Context="PopupContext">
+        @*<img class="fit-width" src="images/Techman Robot.png" style="height: 24%; width: 24%; float:right" align="bottom" />*@
+        <div>
+            <object data="@_ESOPData" type="application/pdf" width="1770" height="780"></object>
+            @*<iframe src='../Uploads/S00/P00/M01/更新License.pdf' width="500" height="678"> </iframe>*@
+        </div>
+    </BodyContentTemplate>
+    <FooterContentTemplate Context="Context">
+        <DxButton CssClass="popup-button my-1 ms-2" RenderStyle="ButtonRenderStyle.Primary" Text="Close" Click="CloseEulaClick" />
+        @*<DxButton CssClass="popup-button my-1 ms-2" RenderStyle="ButtonRenderStyle.Secondary" Text="Cancel" Click="CancelEulaClick" />*@
+    </FooterContentTemplate>
+</DxPopup>
+
+@code {
+    private List<StationStatus>? _StationStatus;
+    private List<StationSelection>? _StationSelection;
+    private List<ProcedureStatus>? _ProcedureStatus;
+    private List<ModelStatus>? _ModelStatus;
+    private List<ESOPStatus>? _ESOPStatus;
+    private Tuple<List<DirectoryStatus>, List<FolderStatus>> _Tuple;
+    private List<DirectoryStatus>? _DirectoryStatus;
+
+    bool EsopPopupVisible { get; set; } = false;
+    string _ESOPMsg;
+    string _ESOPData;
+
+    public string StationName { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _StationStatus = await DataService.GetStationStatusAsync();
+        _StationSelection = await DataService.GetStationSelectionAsync();
+        _ProcedureStatus = await DataService.GetProcedureStatusAsync();
+        _ModelStatus = await DataService.GetModelStatusAsync();
+        _ESOPStatus = await DataService.GetESOPStatusAsync();
+        _Tuple = await DataService.GetESOPDirectoryStatusAsync();
+        _DirectoryStatus = _Tuple.Item1;
+    }
+
+    async Task CloseEulaClick()
+    {
+        EsopPopupVisible = false;
+    }
+}
